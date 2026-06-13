@@ -16,8 +16,8 @@ jobs:
       DIGEST_MODE: demo         # demo=最新N篇不卡日期；正式改 daily
       DEMO_MAX: "3"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
@@ -25,7 +25,7 @@ jobs:
         run: python main.py
       - name: Show digest in log
         run: cat output/*.md
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: daily-digest
           path: output/*.md
