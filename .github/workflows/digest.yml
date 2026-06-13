@@ -1,31 +1,28 @@
-name: RSS Daily Digest (demo)
-
+name: daily-digest
 on:
-  workflow_dispatch:          # 手动触发：Actions 页点 Run
-  # schedule:
-  #   - cron: "30 20 * * *"   # 04:30 Asia/Shanghai = UTC 前一天 20:30；切 daily 模式后再取消注释
-
+  schedule:
+    - cron: "40 20 * * *"     # ★UTC 20:40 = 北京时间次日 04:40（GitHub cron 只认 UTC）
+  workflow_dispatch:           # 允许在网页手动触发，调试用
 permissions:
-  contents: read
-
+  contents: write              # 允许把 docs/ 和 seen.json commit 回仓库
 jobs:
-  digest:
+  build:
     runs-on: ubuntu-latest
-    env:
-      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-      DIGEST_MODE: demo         # demo=最新N篇不卡日期；正式改 daily
-      DEMO_MAX: "3"
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-      - run: pip install -r requirements.txt
-      - name: Run digest
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - run: pip install feedparser requests trafilatura feedgen openai
+      - name: Run
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          DIGEST_MODE: daily
+          SITE_URL: https://wisdomhub521.github.io/daily-digest   # ★改这里
         run: python main.py
-      - name: Show digest in log
-        run: cat output/*.md
-      - uses: actions/upload-artifact@v6
-        with:
-          name: daily-digest
-          path: output/*.md
+      - name: Commit
+        run: |
+          git config user.name  "github-actions"
+          git config user.email "actions@github.com"
+          git add docs seen.json output
+          git diff --cached --quiet || git commit -m "digest $(date -u +%F)"
+          git push
