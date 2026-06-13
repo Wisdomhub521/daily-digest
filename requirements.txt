@@ -1,0 +1,4 @@
+repo/
+├── main.py                       # 上一条给你的，原样用
+├── requirements.txt              # 新增（下面）
+└── .github/workflows/digest.yml  # 新增（下面）
