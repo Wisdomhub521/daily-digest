@@ -36,6 +36,6 @@ jobs:
         run: |
           git config user.name  "github-actions"
           git config user.email "actions@github.com"
-          git add docs seen.json output
+          git add docs seen.json 
           git diff --cached --quiet || git commit -m "digest $(date -u +%FT%H:%MZ)"
           git push
