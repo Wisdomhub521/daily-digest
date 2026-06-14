@@ -1,5 +1,26 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN"><id>https://你的用户名.github.io/你的仓库名/feed.xml</id><title>每日 RSS 摘要</title><updated>2026-06-14T10:13:02.647582+08:00</updated><author><name>RSS Digest Bot</name></author><link href="https://你的用户名.github.io/你的仓库名/feed.xml" rel="self"/><link href="https://你的用户名.github.io/你的仓库名" rel="alternate"/><generator uri="https://lkiesow.github.io/python-feedgen" version="1.0.0">python-feedgen</generator><entry><id>https://你的用户名.github.io/你的仓库名/entries/20260614-1011</id><title>RSS 摘要 · 2026年06月14日 10:11</title><updated>2026-06-14T10:13:02.647582+08:00</updated><content type="html">&lt;p&gt;&lt;em&gt;模式：rolling&lt;/em&gt;&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN"><id>https://wisdomhub521.github.io/daily-digest/feed.xml</id><title>每日 RSS 摘要</title><updated>2026-06-14T10:58:59.169775+08:00</updated><author><name>RSS Digest Bot</name></author><link href="https://wisdomhub521.github.io/daily-digest/feed.xml" rel="self"/><link href="https://wisdomhub521.github.io/daily-digest" rel="alternate"/><generator uri="https://lkiesow.github.io/python-feedgen" version="1.0.0">python-feedgen</generator><entry><id>https://wisdomhub521.github.io/daily-digest/entries/20260614-1058</id><title>RSS 摘要 · 2026年06月14日 10:58</title><updated>2026-06-14T10:58:59.169775+08:00</updated><content type="html">&lt;p&gt;&lt;em&gt;模式：rolling&lt;/em&gt;&lt;/p&gt;
+&lt;h2&gt;1. 〔LessWrong〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;h2&gt;2. 〔Astral Codex Ten〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;h2&gt;3. 〔Farnam Street〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;h2&gt;4. 〔SEP〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;h2&gt;5. 〔OpenStreetMap Blog〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;h2&gt;6. 〔阮一峰〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;h2&gt;7. 〔Hugging Face〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;h2&gt;8. 〔fast.ai〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;h2&gt;9. 〔Our World in Data〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;h2&gt;10. 〔少数派〕&lt;/h2&gt;
+&lt;p&gt;无更新&lt;/p&gt;
+&lt;hr&gt;&lt;p&gt;共 10 个源，0 篇文章，补抓全文 0 篇/失败 0 篇，失败源：[&amp;#x27;Astral Codex Ten&amp;#x27;]&lt;/p&gt;</content><link href="https://wisdomhub521.github.io/daily-digest/entries/20260614-1058.html"/></entry><entry><id>https://wisdomhub521.github.io/daily-digest/entries/20260614-1011</id><title>RSS 摘要 · 2026年06月14日 10:11</title><updated>2026-06-14T10:13:02.647582+08:00</updated><content type="html">&lt;p&gt;&lt;em&gt;模式：rolling&lt;/em&gt;&lt;/p&gt;
 &lt;h2&gt;1. 〔LessWrong〕&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;第1篇：《How to Suffer Less》&lt;/strong&gt; &lt;code&gt;06-14 01:10&lt;/code&gt; &lt;a href="https://www.lesswrong.com/posts/ja37ACj6xsq2pF8Qx/how-to-suffer-less"&gt;原文&lt;/a&gt;&lt;br&gt;&lt;strong&gt;精要：&lt;/strong&gt;文章认为，痛苦分为两类：可通过改善物质条件缓解的，以及源于“渴望成为不是自己的人”而自我施加的。后者无法靠外在舒适消除，需要同时实践三种修行：**觉醒**（彻底认识到“自我”并非全部，并需要持续在每时每刻用系统1而非系统2去体悟）、**慈悲**（因觉醒而看到自他无别，如《道德经》所言“以天下为身而爱之”）、**解放**（从习惯性行为中解脱，因为习惯固着于过去而非当下）。三者缺一不可——缺觉醒，慈悲与解放会导致妄想；缺慈悲，觉醒与解放可能助长恶行；缺解放，觉醒与慈悲易走向病态利他。作者给出了具体实践方法：每天至少30分钟坐禅（zazen，单纯“与当下同在”）、用Gendlin的聚焦法研究自我，以及处理创伤等适应不良行为（例如那些曾经有用但已过时的行为模式）。&lt;br&gt;&lt;strong&gt;延伸：&lt;/strong&gt;这篇文章最反直觉的点在于，“觉醒”并非一次性顿悟，而是对“自我”假象的持续觉察——这解释了为何许多心智成长类方法短期有效却难以持久：它们只改变了认知（系统2），却未重组底层习惯（系统1）。该框架可迁移至任何需要破除“身份认同”的领域，比如职场倦怠（摆脱“我必须是个高效者”的自我叙事）、亲密关系（看清“我要被爱才完整”的执念），其本质都是通过同时修习觉察、共情和行动灵活性来减少内耗。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;第2篇：《Presentfulness: Lucidity, Osmosis, and Dissociation》&lt;/strong&gt; &lt;code&gt;06-14 01:21&lt;/code&gt; &lt;a href="https://www.lesswrong.com/posts/cREAEK6d8Q9EBS2uh/presentfulness-lucidity-osmosis-and-dissociation"&gt;原文&lt;/a&gt;&lt;br&gt;&lt;strong&gt;精要：&lt;/strong&gt;文章提出三种意识状态：清醒态（主动处理信息，感官增强）、渗透态（日常自动处理信息）和解离态（被动脱离外界）。作者以自己坐过山车“绿巨人”为例，描述清醒态下视野中物体运动更突出、感觉帧率提升、能听到远处鸟叫和孩童玩耍声，甚至被“摇醒”般刻骨铭心。他还通过一年多的练习，掌握了主动进入清醒态的方法——比如刻意注意视野中的运动、聆听环境声音、感受风吹过手臂，就像打开一扇门并努力维持它不关闭。文章指出，清醒态能显著提升记忆，因为你主动处理的信息更容易被记住。&lt;br&gt;&lt;strong&gt;延伸：&lt;/strong&gt;这种“主动投入当下”的能力可以迁移到任何需要高度专注的场景——比如学习复杂概念、手术操作、竞技体育或即兴表演；反直觉的是，完全放松的“渗透态”反而难以产生核心记忆，而强行“解离”更会削弱对现实的感知力，这意味着最深刻的体验往往来自主动突破舒适区而非被动等待。&lt;/p&gt;
@@ -29,14 +50,14 @@
 &lt;p&gt;无更新&lt;/p&gt;
 &lt;h2&gt;10. 〔少数派〕&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;第1篇：《具透 | 除了 AI，iOS 27 首个开发者测试版中你不能错过的新功能》&lt;/strong&gt; &lt;code&gt;06-13 10:37&lt;/code&gt;（补抓全文） &lt;a href="https://sspai.com/post/110973"&gt;原文&lt;/a&gt;&lt;br&gt;&lt;strong&gt;精要：&lt;/strong&gt;iOS 27 首个开发者测试版的核心思路是“全面优化系统体验”，而非强行创新。具体改进包括：Liquid Glass 视觉方案新增全局透明度滑杆，让用户自行调节效果强度；性能大幅提升，Apple 称 App 启动最多快 30%、拍照回看快 70%、AirDrop 快 80%、外置存储传输快 5 倍，且旧机型多任务体验显著改善。Safari 新增页面内容监测提醒功能，可设置关键词和监测频率，用于抢票等场景。AI 功能虽是中国大陆的“遗憾”，但系统键盘的离线多语言转译、日历和提醒事项的自然语义输入、照片的扩展与重构（AI 填补多余部分）等能力已实装，只是部分功能被地理围栏限制。此外，iOS 27 代码中暗示了可折叠 iPhone 的 App resizability 框架，为未来折叠屏设备埋下伏笔。&lt;br&gt;&lt;strong&gt;延伸：&lt;/strong&gt;这一版 iOS 的务实路线，其实揭示了一个反直觉的行业规律——当所有厂商都在追逐“新功能”时，把欠下的基础体验债（流畅度、稳定性、传输速度）还清，反而能成为用户升级后“最不后悔”的理由。这种“补课式创新”同样适用于其他领域：比如软件产品在堆叠 AI 功能之前，先优化响应速度和搜索质量，往往比盲目上马大模型更能留住用户。&lt;/p&gt;
-&lt;hr&gt;&lt;p&gt;共 10 个源，11 篇文章，补抓全文 1 篇/失败 0 篇，失败源：[&amp;#x27;Astral Codex Ten&amp;#x27;]&lt;/p&gt;</content><link href="https://你的用户名.github.io/你的仓库名/entries/20260614-1011.html"/></entry><entry><id>https://你的用户名.github.io/你的仓库名/entries/20260613</id><title>每日 RSS 摘要 · 2026年06月13日</title><updated>2026-06-14T05:50:16.952361+08:00</updated><content type="html">&lt;p&gt;&lt;em&gt;模式：daily&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;&lt;p&gt;共 10 个源，11 篇文章，补抓全文 1 篇/失败 0 篇，失败源：[&amp;#x27;Astral Codex Ten&amp;#x27;]&lt;/p&gt;</content><link href="https://wisdomhub521.github.io/daily-digest/entries/20260614-1011.html"/></entry><entry><id>https://wisdomhub521.github.io/daily-digest/entries/20260613</id><title>每日 RSS 摘要 · 2026年06月13日</title><updated>2026-06-14T05:50:16.952361+08:00</updated><content type="html">&lt;p&gt;&lt;em&gt;模式：daily&lt;/em&gt;&lt;/p&gt;
 &lt;h2&gt;1. 〔LessWrong〕&lt;/h2&gt;
 &lt;p&gt;昨日无更新&lt;/p&gt;
 &lt;h2&gt;2. 〔阮一峰〕&lt;/h2&gt;
 &lt;p&gt;昨日无更新&lt;/p&gt;
-&lt;hr&gt;&lt;p&gt;共 2 个源，0 篇文章，补抓全文 0 篇/失败 0 篇，失败源：无&lt;/p&gt;</content><link href="https://你的用户名.github.io/你的仓库名/entries/20260613.html"/></entry><entry><id>https://你的用户名.github.io/你的仓库名/entries/20260612</id><title>每日 RSS 摘要 · 2026年06月12日</title><updated>2026-06-13T20:28:18.756750+08:00</updated><content type="html">&lt;p&gt;&lt;em&gt;模式：daily&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;&lt;p&gt;共 2 个源，0 篇文章，补抓全文 0 篇/失败 0 篇，失败源：无&lt;/p&gt;</content><link href="https://wisdomhub521.github.io/daily-digest/entries/20260613.html"/></entry><entry><id>https://wisdomhub521.github.io/daily-digest/entries/20260612</id><title>每日 RSS 摘要 · 2026年06月12日</title><updated>2026-06-13T20:28:18.756750+08:00</updated><content type="html">&lt;p&gt;&lt;em&gt;模式：daily&lt;/em&gt;&lt;/p&gt;
 &lt;h2&gt;1. 〔LessWrong〕&lt;/h2&gt;
 &lt;p&gt;昨日无更新&lt;/p&gt;
 &lt;h2&gt;2. 〔阮一峰〕&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;第1篇：《科技爱好者周刊（第 400 期）：rsync 的争论》&lt;/strong&gt; &lt;code&gt;06-12 07:26&lt;/code&gt; &lt;a href="http://www.ruanyifeng.com/blog/2026/06/weekly-issue-400.html"&gt;原文&lt;/a&gt;&lt;br&gt;&lt;strong&gt;精要：&lt;/strong&gt;本文围绕rsync 3.4.3版本由Claude AI生成代码引发的激烈争论展开（GitHub讨论帖“不要乱搞这个软件”已有300多条发言），反对者认为AI可能引入漏洞，甚至比喻为“在施舍粥里撒尿”；维护者Andrew Tridgell则坦言，面对AI发现的大量安全报告和自身精力不足，被迫转向“AI写代码+人类测试”模式，认为这将使未来大型项目更安全。另有两项具体案例佐证AI的双刃剑效应：Meta公司AI客服可被一句提示词诱导修改奥巴马等用户的注册邮箱，从而轻松窃取账户；苹果公司则利用扩音设备自动删除Siri语音中的特定频率（3k、4k、5k、6kHz），防止会场演示时唤醒听众手机——细节准备之极致反衬出AI系统漏洞之幼稚。&lt;br&gt;&lt;strong&gt;延伸：&lt;/strong&gt;最反直觉的点是，蚊子经过巴甫洛夫式训练后，居然有近60%主动飞向涂有避蚊胺的手——本应驱虫的气味反而成了“开饭信号”，这意味着依赖单一气味驱蚊可能适得其反。这警示人们：任何被设计为“排斥”的机制（无论是AI的防护逻辑还是化学驱避剂），都可能被对手反向利用。而rsync争论中，维护者用AI修复AI发现的漏洞，本质是一场永不停歇的“军备竞赛”，未来人类工程师的角色将彻底从“生产者”转为“测试者和裁判员”。&lt;/p&gt;
-&lt;hr&gt;&lt;p&gt;共 2 个源，1 篇文章，补抓全文 0 篇/失败 0 篇，失败源：无&lt;/p&gt;</content><link href="https://你的用户名.github.io/你的仓库名/entries/20260612.html"/></entry></feed>
+&lt;hr&gt;&lt;p&gt;共 2 个源，1 篇文章，补抓全文 0 篇/失败 0 篇，失败源：无&lt;/p&gt;</content><link href="https://wisdomhub521.github.io/daily-digest/entries/20260612.html"/></entry></feed>
