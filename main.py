@@ -1,37 +1,40 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-RSS 每日摘要 —— 完整版（抓取 / 容错 / 昨日筛选 / 补抓 / DeepSeek 摘要 / 生成 Atom feed / 去重）
+RSS 每日摘要 —— 完整版 v2（抓取 / 容错 / 时间窗筛选 / 补抓 / DeepSeek 摘要 / 生成 Atom feed / 去重）
 
-当前 FEEDS 仅含 LessWrong + 阮一峰（两源验证整条链路）。加源直接往 FEEDS 里加即可，
-fetch=True 表示「正文过短时允许补抓全文」。
+源：6 个「直接用」+ 4 个「补抓」，内联在 FEEDS（fetch=True 表示正文过短时补抓全文）。
 
 依赖：
     pip install feedparser requests trafilatura feedgen openai
 
+三种模式（DIGEST_MODE）：
+    demo      （默认）不卡日期，每源取最新 N 篇 —— 验证拼版用
+    daily                只取「昨天(Asia/Shanghai)」发布的，适合每天清晨一次汇总
+    rolling              取「最近 LOOKBACK_HOURS 小时」发布的 + 去重增量，适合一天多次更新
+
 跑法：
     export DEEPSEEK_API_KEY=sk-xxxx
-    python main.py                          # 默认 demo 模式（不卡日期，保证有内容）
-
-    DIGEST_MODE=daily python main.py        # 正式：只取「昨天(Asia/Shanghai)」发布的文章
-    DRY_RUN=1 python main.py                # 跳过 DeepSeek，用占位摘要看拼版/feed
+    DIGEST_MODE=rolling python main.py       # 生产：一天两跑用这个
+    DRY_RUN=1 DIGEST_MODE=demo python main.py # 跳过 DeepSeek 看拼版/feed
 
 产物：
-    output/digest-YYYYMMDD.md   控制台同款 markdown 存档
-    docs/entries/YYYYMMDD.json  当期摘要（feed 历史素材）
-    docs/feed.xml               Atom feed（GitHub Pages 发布目录，给 Inoreader 订阅）
-    seen.json                   已处理文章 ID（daily 模式默认启用去重）
+    output/digest-<run_key>.md   控制台同款 markdown 存档
+    docs/entries/<run_key>.json  当次摘要（feed 历史素材；rolling 下 run_key 含时分，一天多跑互不覆盖）
+    docs/feed.xml                Atom feed（GitHub Pages 发布目录，给 Inoreader 订阅）
+    seen.json                    已处理文章 ID（daily/rolling 默认启用去重）
 
-环境变量一览：
-    DIGEST_MODE     demo|daily（默认 demo）
+环境变量：
+    DIGEST_MODE     demo|daily|rolling（默认 demo）
+    LOOKBACK_HOURS  rolling 窗口小时数（默认 30，两跑间隔 10h，留足重叠兜底防漏）
     DEMO_MAX        demo 每源最多取几篇（默认 3）
-    MAX_PER_FEED    daily 每源上限，防全量 feed 刷屏（默认 10）
+    MAX_PER_FEED    daily/rolling 每源上限，防全量 feed 刷屏（默认 10）
     CONTENT_LIMIT   喂 DeepSeek 的正文上限字符（默认 6000）
-    FETCH_THRESHOLD 正文 strip_html 后短于此字符数才触发补抓（默认 300）
-    DEEPSEEK_MODEL  默认 deepseek-v4-flash（沿用你 demo；如用 instructions 的就设 deepseek-chat）
-    SITE_URL        GitHub Pages 站点根，用于 feed 里的链接（默认占位，部署后改成你的）
-    FEED_KEEP       feed 保留最近 N 期（默认 30）
-    USE_SEEN        1|0，是否启用去重（默认 daily=1 / demo=0）
+    FETCH_THRESHOLD 正文 strip_html 后短于此才补抓（默认 300）
+    DEEPSEEK_MODEL  默认 deepseek-v4-flash
+    SITE_URL        GitHub Pages 站点根（部署后改成你的）
+    FEED_KEEP       feed 保留最近 N 期（默认 40）
+    USE_SEEN        1|0（默认 demo=0 / 其余=1）
 """
 
 import os, re, sys, time, json, html, hashlib
@@ -45,27 +48,34 @@ import feedparser
 TZ = ZoneInfo("Asia/Shanghai")
 UA = "Mozilla/5.0 (compatible; RSSDigestBot/1.0; +https://github.com/yourname/rss-digest)"
 
-# ---- 源清单（加源往这里加；fetch=True 表示正文过短时允许补抓）----
+# ---- 源清单（fetch=True：正文过短时补抓全文）----
 FEEDS = [
-    {"name": "LessWrong", "url": "https://www.lesswrong.com/feed.xml",        "fetch": False},
-    {"name": "阮一峰",     "url": "https://www.ruanyifeng.com/blog/atom.xml",  "fetch": False},
-    # 补抓源示例（MVP 验证通过后加回）：
-    # {"name": "少数派",           "url": "https://sspai.com/feed",               "fetch": True},
-    # {"name": "Hugging Face",     "url": "https://huggingface.co/blog/feed.xml", "fetch": True},
-    # {"name": "Our World in Data","url": "https://ourworldindata.org/atom.xml",  "fetch": True},
+    # —— 直接用（feed 自带全文或摘要够长）——
+    {"name": "LessWrong",          "url": "https://www.lesswrong.com/feed.xml",         "fetch": False},
+    {"name": "Astral Codex Ten",   "url": "https://astralcodexten.substack.com/feed",   "fetch": False},
+    {"name": "Farnam Street",      "url": "https://fs.blog/feed/",                       "fetch": False},
+    {"name": "SEP",                "url": "https://plato.stanford.edu/rss/sep.xml",      "fetch": False},
+    {"name": "OpenStreetMap Blog", "url": "https://blog.openstreetmap.org/feed/",        "fetch": False},
+    {"name": "阮一峰",             "url": "https://www.ruanyifeng.com/blog/atom.xml",    "fetch": False},
+    # —— 补抓（feed 正文过短，触发全文抓取）——
+    {"name": "Hugging Face",       "url": "https://huggingface.co/blog/feed.xml",        "fetch": True},
+    {"name": "fast.ai",            "url": "https://www.fast.ai/index.xml",               "fetch": True},
+    {"name": "Our World in Data",  "url": "https://ourworldindata.org/atom.xml",         "fetch": True},
+    {"name": "少数派",             "url": "https://sspai.com/feed",                      "fetch": True},
 ]
 
 # ---- 配置 ----
-MODE            = os.getenv("DIGEST_MODE", "demo").lower()       # demo | daily
+MODE            = os.getenv("DIGEST_MODE", "demo").lower()       # demo | daily | rolling
+LOOKBACK_HOURS  = int(os.getenv("LOOKBACK_HOURS", "30"))
 DEMO_MAX        = int(os.getenv("DEMO_MAX", "3"))
 MAX_PER_FEED    = int(os.getenv("MAX_PER_FEED", "10"))
 CONTENT_LIMIT   = int(os.getenv("CONTENT_LIMIT", "6000"))
 FETCH_THRESHOLD = int(os.getenv("FETCH_THRESHOLD", "300"))
 DEEPSEEK_MODEL  = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash")
 SITE_URL        = os.getenv("SITE_URL", "https://yourname.github.io/rss-digest").rstrip("/")
-FEED_KEEP       = int(os.getenv("FEED_KEEP", "30"))
+FEED_KEEP       = int(os.getenv("FEED_KEEP", "40"))
 DRY_RUN         = os.getenv("DRY_RUN") == "1" or not os.getenv("DEEPSEEK_API_KEY")
-USE_SEEN        = os.getenv("USE_SEEN", "1" if MODE == "daily" else "0") == "1"
+USE_SEEN        = os.getenv("USE_SEEN", "0" if MODE == "demo" else "1") == "1"
 
 DOCS      = Path("docs")
 ENTRIES   = DOCS / "entries"
@@ -123,9 +133,9 @@ def entry_uid(e) -> str:
 
 # ---------------- 补抓 ----------------
 def fetch_fulltext(url: str) -> str:
-    """正文过短时抓 HTML 全文。requests(正经UA+退避×3) → trafilatura.extract。"""
+    """正文过短时抓 HTML 全文。requests(正经UA+退避×3) → trafilatura.extract，不用 fetch_url。"""
     import trafilatura
-    raw = http_get(url)  # 复用带 UA + 指数退避的 http_get，不用 trafilatura.fetch_url
+    raw = http_get(url)
     text = trafilatura.extract(raw, include_comments=False, favor_recall=True)
     return (text or "").strip()
 
@@ -181,9 +191,23 @@ def save_seen(seen: set):
         SEEN_FILE.write_text(json.dumps(sorted(seen), ensure_ascii=False, indent=0), "utf-8")
 
 
+# ---------------- 运行标识 ----------------
+def run_meta():
+    """返回 (run_key, run_title, disp_date)。
+    daily：一天一篇，key/标题按昨天日期；其余：key 含时分，一天多跑互不覆盖。"""
+    now = datetime.now(TZ)
+    if MODE == "daily":
+        d = (now - timedelta(days=1)).date()
+        return d.strftime("%Y%m%d"), f"每日 RSS 摘要 · {d.strftime('%Y年%m月%d日')}", d
+    return (now.strftime("%Y%m%d-%H%M"),
+            f"RSS 摘要 · {now.strftime('%Y年%m月%d日 %H:%M')}", now.date())
+
+
 # ---------------- 采集 ----------------
 def collect(seen: set):
-    yesterday = (datetime.now(TZ) - timedelta(days=1)).date()
+    now       = datetime.now(TZ)
+    yesterday = (now - timedelta(days=1)).date()
+    cutoff    = now - timedelta(hours=LOOKBACK_HOURS)
     sections, failed = [], []
     fetched_n = fetch_fail_n = 0
 
@@ -200,6 +224,9 @@ def collect(seen: set):
                 if MODE == "daily":
                     if t is None or t.date() != yesterday:
                         continue
+                elif MODE == "rolling":
+                    if t is None or t < cutoff:
+                        continue
                 items.append({
                     "uid": uid,
                     "title": e.get("title", "(无标题)"),
@@ -212,8 +239,7 @@ def collect(seen: set):
             limit = DEMO_MAX if MODE == "demo" else MAX_PER_FEED
             items = items[-limit:]  # 升序后取末尾 = 最新 limit 篇，仍保持时间从早到晚
 
-            # 补抓：正文过短且该源允许 + 有 link
-            for it in items:
+            for it in items:  # 补抓：正文过短且该源允许且有 link
                 if it["_can_fetch"] and it["link"] and len(it["body"]) < FETCH_THRESHOLD:
                     try:
                         full = fetch_fulltext(it["link"])
@@ -233,7 +259,7 @@ def collect(seen: set):
             sections.append({"name": name, "items": []})
             log(f"[{name}] 失败: {e}")
 
-    return sections, failed, yesterday, fetched_n, fetch_fail_n
+    return sections, failed, fetched_n, fetch_fail_n
 
 
 def summarize_all(sections):
@@ -249,14 +275,13 @@ def _stat_line(sections, failed, fetched_n, fetch_fail_n):
             f"补抓全文 {fetched_n} 篇/失败 {fetch_fail_n} 篇，"
             f"失败源：{failed or '无'}")
 
-def render_md(sections, failed, yesterday, fetched_n, fetch_fail_n):
-    title_date = yesterday if MODE == "daily" else datetime.now(TZ).date()
-    out = [f"# 每日 RSS 摘要 · {title_date.strftime('%Y年%m月%d日')}",
+def render_md(sections, failed, fetched_n, fetch_fail_n, run_title):
+    out = [f"# {run_title}",
            f"_模式：{MODE}{'（DRY_RUN 占位）' if DRY_RUN else ''}_\n"]
     for i, sec in enumerate(sections, 1):
         out.append(f"\n## {i}. 〔{sec['name']}〕\n")
         if not sec["items"]:
-            out.append("　昨日无更新\n")
+            out.append("　无更新\n")
             continue
         for j, it in enumerate(sec["items"], 1):
             ts = it["time"].strftime("%m-%d %H:%M") if it["time"] else "时间缺失"
@@ -267,14 +292,13 @@ def render_md(sections, failed, yesterday, fetched_n, fetch_fail_n):
     out.append(f"\n---\n{_stat_line(sections, failed, fetched_n, fetch_fail_n)}")
     return "\n".join(out)
 
-def render_html(sections, failed, yesterday, fetched_n, fetch_fail_n):
+def render_html(sections, failed, fetched_n, fetch_fail_n):
     esc = lambda s: html.escape(s or "")
-    title_date = yesterday if MODE == "daily" else datetime.now(TZ).date()
     parts = [f"<p><em>模式：{MODE}{'（DRY_RUN 占位）' if DRY_RUN else ''}</em></p>"]
     for i, sec in enumerate(sections, 1):
         parts.append(f"<h2>{i}. 〔{esc(sec['name'])}〕</h2>")
         if not sec["items"]:
-            parts.append("<p>昨日无更新</p>")
+            parts.append("<p>无更新</p>")
             continue
         for j, it in enumerate(sec["items"], 1):
             ts = it["time"].strftime("%m-%d %H:%M") if it["time"] else "时间缺失"
@@ -287,31 +311,28 @@ def render_html(sections, failed, yesterday, fetched_n, fetch_fail_n):
                 f"<strong>延伸：</strong>{esc(it['qifa'])}</p>"
             )
     parts.append(f"<hr><p>{esc(_stat_line(sections, failed, fetched_n, fetch_fail_n))}</p>")
-    return "\n".join(parts), title_date
+    return "\n".join(parts)
 
 
 # ---------------- 生成 Atom feed ----------------
-def write_entry_and_feed(title_date, html_content):
-    """把当期摘要落盘为 entries/{date}.json，再扫描最近 FEED_KEEP 期重建 docs/feed.xml。"""
+def write_entry_and_feed(run_key, run_title, html_content):
+    """落盘 entries/<run_key>.json，再扫描最近 FEED_KEEP 期重建 docs/feed.xml。"""
     from feedgen.feed import FeedGenerator
 
     ENTRIES.mkdir(parents=True, exist_ok=True)
-    date_str = title_date.strftime("%Y%m%d")
-    title = f"每日 RSS 摘要 · {title_date.strftime('%Y年%m月%d日')}"
     now = datetime.now(TZ)
-    (ENTRIES / f"{date_str}.json").write_text(json.dumps({
-        "date": date_str, "title": title,
+    (ENTRIES / f"{run_key}.json").write_text(json.dumps({
+        "key": run_key, "title": run_title,
         "updated": now.isoformat(), "html": html_content,
     }, ensure_ascii=False), "utf-8")
 
-    # 读全部历史，按日期倒序取最近 FEED_KEEP 期
     rows = []
     for p in ENTRIES.glob("*.json"):
         try:
             rows.append(json.loads(p.read_text("utf-8")))
         except Exception:
             pass
-    rows.sort(key=lambda r: r["date"], reverse=True)
+    rows.sort(key=lambda r: r["key"], reverse=True)
     rows = rows[:FEED_KEEP]
 
     fg = FeedGenerator()
@@ -323,48 +344,45 @@ def write_entry_and_feed(title_date, html_content):
     fg.language("zh-CN")
     fg.updated(now)
 
-    # 按日期升序 add_entry：feedgen 默认把后加的放前面，故最终最新在最上
-    for r in sorted(rows, key=lambda x: x["date"]):
+    for r in sorted(rows, key=lambda x: x["key"]):  # 升序加，feedgen 把最新放最上
         fe = fg.add_entry()
-        fe.id(f"{SITE_URL}/entries/{r['date']}")
+        fe.id(f"{SITE_URL}/entries/{r['key']}")
         fe.title(r["title"])
-        fe.link(href=f"{SITE_URL}/entries/{r['date']}.html")
+        fe.link(href=f"{SITE_URL}/entries/{r['key']}.html")
         fe.updated(r["updated"])
         fe.content(r["html"], type="html")
 
     DOCS.mkdir(parents=True, exist_ok=True)
     fg.atom_file(str(DOCS / "feed.xml"))
-    # 顺手把当期 HTML 落一份独立页，便于 Pages 直链（Inoreader 不依赖它，可读 feed 内嵌全文）
-    (ENTRIES / f"{date_str}.html").write_text(
-        f"<!doctype html><meta charset=utf-8><title>{html.escape(title)}</title>"
-        f"<h1>{html.escape(title)}</h1>\n{html_content}", "utf-8")
+    (ENTRIES / f"{run_key}.html").write_text(
+        f"<!doctype html><meta charset=utf-8><title>{html.escape(run_title)}</title>"
+        f"<h1>{html.escape(run_title)}</h1>\n{html_content}", "utf-8")
 
 
 # ---------------- 主流程 ----------------
 def main():
     log(f"=== MODE={MODE} DRY_RUN={DRY_RUN} USE_SEEN={USE_SEEN} MODEL={DEEPSEEK_MODEL} ===")
     seen = load_seen()
+    run_key, run_title, _ = run_meta()
 
-    sections, failed, yesterday, fetched_n, fetch_fail_n = collect(seen)
+    sections, failed, fetched_n, fetch_fail_n = collect(seen)
     summarize_all(sections)
 
-    md = render_md(sections, failed, yesterday, fetched_n, fetch_fail_n)
-    html_content, title_date = render_html(sections, failed, yesterday, fetched_n, fetch_fail_n)
+    md   = render_md(sections, failed, fetched_n, fetch_fail_n, run_title)
+    html_content = render_html(sections, failed, fetched_n, fetch_fail_n)
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    fn = OUTPUT / f"digest-{datetime.now(TZ).strftime('%Y%m%d')}.md"
-    fn.write_text(md, "utf-8")
+    (OUTPUT / f"digest-{run_key}.md").write_text(md, "utf-8")
 
-    write_entry_and_feed(title_date, html_content)
+    write_entry_and_feed(run_key, run_title, html_content)
 
-    # 处理成功后再写 seen（失败的不计入，留待下轮重试）
-    for sec in sections:
+    for sec in sections:  # 成功处理的才计入 seen
         for it in sec["items"]:
             seen.add(it["uid"])
     save_seen(seen)
 
     print(md)
-    log(f"\n已写入 {fn}  |  docs/feed.xml 已更新")
+    log(f"\n已写入 output/digest-{run_key}.md  |  docs/feed.xml 已更新")
 
 
 if __name__ == "__main__":
