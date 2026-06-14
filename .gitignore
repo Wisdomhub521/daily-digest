@@ -1,0 +1,11 @@
+# Python
+   __pycache__/
+   *.pyc
+   .venv/
+   venv/
+
+   # check_feed 备份
+   main.py.bak
+
+   # 本地存档（feed 用 docs/）
+   output/
