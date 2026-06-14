@@ -83,6 +83,8 @@ FEEDS = [
     {"name": "fast.ai",            "url": "https://www.fast.ai/index.xml",               "fetch": True},
     {"name": "Our World in Data",  "url": "https://ourworldindata.org/atom.xml",         "fetch": True},
     {"name": "少数派",             "url": "https://sspai.com/feed",                      "fetch": True},
+    # === BEGIN AUTO-ADDED（check_feed.py --write 自动写入区，勿删这对锚点）===
+    # === END AUTO-ADDED ===
 ]
 
 # ---- 配置 ----
