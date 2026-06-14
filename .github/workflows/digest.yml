@@ -1,10 +1,18 @@
-name: daily-digest
+name: rss-digest
 on:
   schedule:
-    - cron: "40 20 * * *"     # ★UTC 20:40 = 北京时间次日 04:40（GitHub cron 只认 UTC）
-  workflow_dispatch:           # 允许在网页手动触发，调试用
+    # ★ GitHub cron 只认 UTC。上海(UTC+8)：
+    - cron: "0 0 * * *"      # UTC 00:00 = 上海 08:00
+    - cron: "0 10 * * *"     # UTC 10:00 = 上海 18:00
+  workflow_dispatch:          # 允许在 Actions 页手动触发（首次验证用）
+
 permissions:
-  contents: write              # 允许把 docs/ 和 seen.json commit 回仓库
+  contents: write             # 允许把 docs/ 和 seen.json commit 回仓库
+
+concurrency:                  # 防两次触发撞车导致 push 冲突
+  group: rss-digest
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,17 +20,22 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.13" }
-      - run: pip install feedparser requests trafilatura feedgen openai
-      - name: Run
+
+      - name: Install deps
+        run: pip install feedparser requests trafilatura feedgen openai
+
+      - name: Run digest
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          DIGEST_MODE: daily
-          SITE_URL: https://wisdomhub521.github.io/daily-digest   # ★改这里
+          DIGEST_MODE: rolling
+          LOOKBACK_HOURS: "30"        # 两跑间隔10h，30h窗口留重叠兜底防漏；靠seen去重不重复
+          SITE_URL: https://你的用户名.github.io/你的仓库名   # ★必改
         run: python main.py
-      - name: Commit
+
+      - name: Commit results
         run: |
           git config user.name  "github-actions"
           git config user.email "actions@github.com"
           git add docs seen.json output
-          git diff --cached --quiet || git commit -m "digest $(date -u +%F)"
+          git diff --cached --quiet || git commit -m "digest $(date -u +%FT%H:%MZ)"
           git push
