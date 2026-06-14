@@ -29,7 +29,7 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           DIGEST_MODE: rolling
           LOOKBACK_HOURS: "30"        # 两跑间隔10h，30h窗口留重叠兜底防漏；靠seen去重不重复
-          SITE_URL: https://你的用户名.github.io/你的仓库名   # ★必改
+          SITE_URL: https://wisdomhub521.github.io/daily-digest   # ★必改
         run: python main.py
 
       - name: Commit results
