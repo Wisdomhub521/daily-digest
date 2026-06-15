@@ -73,15 +73,8 @@ def pick_ua(url: str) -> str:
 FEEDS = [
     # —— 直接用（feed 自带全文或摘要够长）——
     {"name": "LessWrong",          "url": "https://www.lesswrong.com/feed.xml",         "fetch": False},
-    {"name": "Astral Codex Ten",   "url": "https://astralcodexten.substack.com/feed",   "fetch": False},
-    {"name": "Farnam Street",      "url": "https://fs.blog/feed/",                       "fetch": False},
-    {"name": "SEP",                "url": "https://plato.stanford.edu/rss/sep.xml",      "fetch": False},
-    {"name": "OpenStreetMap Blog", "url": "https://blog.openstreetmap.org/feed/",        "fetch": False},
-    {"name": "阮一峰",             "url": "https://www.ruanyifeng.com/blog/atom.xml",    "fetch": False},
     # —— 补抓（feed 正文过短，触发全文抓取）——
     {"name": "Hugging Face",       "url": "https://huggingface.co/blog/feed.xml",        "fetch": True},
-    {"name": "fast.ai",            "url": "https://www.fast.ai/index.xml",               "fetch": True},
-    {"name": "Our World in Data",  "url": "https://ourworldindata.org/atom.xml",         "fetch": True},
     {"name": "少数派",             "url": "https://sspai.com/feed",                      "fetch": True},
     # === BEGIN AUTO-ADDED（check_feed.py --write 自动写入区，勿删这对锚点）===
     # === END AUTO-ADDED ===
@@ -456,13 +449,22 @@ def main():
     run_key, run_title, _ = run_meta()
 
     sections, failed, fetched_n, fetch_fail_n = collect(seen)
+
+    # ★ 护栏：本轮 0 篇新文章 → 不调 DeepSeek、不写 docs/output、不推送。
+    #   备用触发在主跑已成功时空跑即退（文章已进 seen），不刷空摘要；
+    #   主跑被跳过时文章仍在 LOOKBACK 窗口内，备用触发正常补出摘要。
+    total_new = sum(len(s["items"]) for s in sections)
+    if total_new == 0:
+        log("本轮 0 篇新文章 → 跳过摘要/feed 生成与推送（备用触发空跑无害）。")
+        return
+
     summarize_all(sections)
 
     md   = render_md(sections, failed, fetched_n, fetch_fail_n, run_title)
     html_content = render_html(sections, failed, fetched_n, fetch_fail_n)
 
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    (OUTPUT / f"digest-{run_key}.md").write_text(md, "utf-8")
+    OUTPUT.mkdir(parents=True, exist_ok=True)            # ← output 段，保持不变
+    (OUTPUT / f"digest-{run_key}.md").write_text(md, "utf-8")  # ← 仅本地存档，不进仓库
 
     write_entry_and_feed(run_key, run_title, html_content)
 
@@ -473,7 +475,3 @@ def main():
 
     print(md)
     log(f"\n已写入 output/digest-{run_key}.md  |  docs/feed.xml 已更新")
-
-
-if __name__ == "__main__":
-    main()
