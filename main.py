@@ -475,3 +475,5 @@ def main():
 
     print(md)
     log(f"\n已写入 output/digest-{run_key}.md  |  docs/feed.xml 已更新")
+if __name__ == "__main__":
+    main()
