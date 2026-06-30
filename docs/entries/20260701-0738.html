@@ -1,0 +1,10 @@
+<!doctype html><meta charset=utf-8><title>RSS 摘要 · 2026年07月01日 07:38</title><h1>RSS 摘要 · 2026年07月01日 07:38</h1>
+<p><em>模式：rolling</em></p>
+<h2>1. 〔LessWrong〕</h2>
+<p><strong>第1篇：《&quot;Correct Answer Features&quot; Cannot Explain Multiple Choice Capabilities》</strong> <code>07-01 06:46</code> <a href="https://www.lesswrong.com/posts/bJG6t8iBoDfKq4xcE/correct-answer-features-cannot-explain-multiple-choice">原文</a><br><strong>精要：</strong>文章通过理论和实验论证，大型语言模型（LLM）在做多选题时，不能单纯依赖所谓的“正确答案特征”（即对每个选项最后一个token进行“正确性”打分）。理论上有两类反例：一是“非传递性选项”，比如问“石头剪刀布中哪个手赢”，第一个选项的“正确性”取决于第二个选项是什么，无法在选项末尾确定；二是“细节后置”，比如将问题放在选项之后（选项先出现、问题后出现），模型在处理选项时根本看不到问题。实验发现，即使把问题放在选项之后（此时正确答案特征机制理论上不可用），Llama 3系列模型在多个领域仍能达到90%以上准确率，而且它们所使用的、对正确答案预测贡献最大的注意力头集合，与问题优先时的集合几乎完全相同（高影响力头部的顺序和内容一致）。这说明模型实际采用的机制并非“正确答案特征”，而是一种更通用的、不依赖选项局部信息的计算方式。<br><strong>延伸：</strong>这一发现揭示了神经网络在处理结构化任务时，可能更倾向于使用全局上下文匹配的“回路”，而非局部特征提取。这可以解释为什么某些看似依赖顺序的推理（如阅读理解ABC选项）对模型表现影响不大——它们其实在并行地对所有选项和问题进行关系建模。最反直觉的一点是：即使理论上“正确答案特征”在特定情况下完全不可行，模型的表现依然稳健，这说明我们常假设的“简洁解释”（如特征检测）往往只是人类的自洽幻觉，真实机制可能远比想象中复杂和通用。</p>
+<p><strong>第2篇：《The consequences of locking intelligence away: an introduction to Claude relays in China》</strong> <code>07-01 06:57</code> <a href="https://www.lesswrong.com/posts/YrgeED3nWD4EjcqLd/the-consequences-of-locking-intelligence-away-an">原文</a><br><strong>精要：</strong>文章指出，中国通过大量API中转站（relay）将西方补贴渠道的廉价大模型（如Claude、ChatGPT订阅、AWS/Azure积分等）转售给国内用户，价格仅为官方API的1/5到1/10。例如淘宝上数十种中转服务，以及linux.do论坛和hvoy.ai评测网站帮助用户甄别真假。甚至有免费中转被怀疑由智谱运营，用来收集数据。这种灰色市场导致中国本土大模型被迫降价竞争——例如GLM-5.2的百万输出定价4.2美元，仍难敌可信中转站上Opus 4.8的7.5美元。作者认为，西方常指责中国“蒸馏”模型，但现实是市场激励（而非政府行为）驱动了企业和个人使用中转服务，这本质上是当前AI禁令的必然终点。<br><strong>延伸：</strong>技术封锁反而催生了一个高效、低价的灰色生态，让用户以远低于官方的成本获得最前沿模型——这揭示了控制与市场需求之间的经典矛盾：当合法通道被切断，地下渠道会以更灵活、更去中心化的方式填补真空，甚至反过来倒逼本土产业被迫“内卷”。这种动态在其他受限制的技术领域（如芯片、加密通信）同样可见。</p>
+<h2>2. 〔Hugging Face〕</h2>
+<p>无更新</p>
+<h2>3. 〔少数派〕</h2>
+<p>无更新</p>
+<hr><p>共 3 个源，2 篇文章，补抓全文 0 篇/失败 0 篇，失败源：无</p>
